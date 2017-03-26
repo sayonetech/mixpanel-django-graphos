@@ -30,19 +30,10 @@ def get_brand_report(request):
     """
     # If brand is defined check if it's valid
     brand_slug = request.GET.get('brand')
-    if brand_slug != 'all_brands':
-        brand = get_object_or_404(Brand, slug=brand_slug)
-        # Check if the user is admin or belong to the brand
-        if (not (request.user.is_superuser or
-                 not request.user.is_authenticated() or
-                 brand in request.user.brands.all() or
-                 brand.group in request.user.groups.all())):
 
-            return HttpResponse('Unauthorized', status=401)
-    else:
-        # Only admin users can retreived reports without brand filter
-        if not request.user.is_superuser:
-            return HttpResponse('Unauthorized', status=401)
+    # Only admin users can retreived reports without brand filter
+    if not request.user.is_superuser:
+        return HttpResponse('Unauthorized', status=401)
 
     # Connect to Mixpanel
     if settings.MIXPANEL_API_KEY and settings.MIXPANEL_SECRET_KEY:
@@ -54,6 +45,7 @@ def get_brand_report(request):
     params['event'] = request.GET.get('event')
     if request.GET.get('limit'):
         params['limit'] = request.GET.get('limit')
+
     # Generate query to extract events
     to_date = datetime.datetime.now()
     from_date = datetime.date(year=to_date.year, month=to_date.month, day=1)
@@ -76,6 +68,7 @@ def get_brand_report(request):
             'from_date': from_date.strftime('%Y-%m-%d'),
             'to_date': to_date.strftime('%Y-%m-%d'),
         })
+
     # Filter by brand if it's defined
     if brand_slug != 'all_brands':
         brand = get_object_or_404(Brand, slug=brand_slug)
@@ -138,8 +131,6 @@ class ReportAggregateActivityView2(TemplateView):
         context = super(ReportAggregateActivityView2, self).get_context_data(*args, **kwargs)
         # req = requests.get('https://0d1f2b8b4539fd6452ec08402c4a44ef@mixpanel.com/api/2.0/events/names?type=general')
         # context['event_names'] = json.loads(req.content)
-        context['brands'] = Brand.objects.all()
-        context['fiz_provider'] = get_or_none(Provider, name=Provider.FIZ)
         return context
 
     def get(self, request, *args, **kwargs):
