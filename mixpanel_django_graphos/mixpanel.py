@@ -3,24 +3,8 @@
 # Mixpanel, Inc. -- http://mixpanel.com/
 #
 # Python API client library to consume mixpanel.com analytics data.
-#
-# Copyright 2010-2013 Mixpanel, Inc
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
-import base64
 import urllib
-import urllib2
 import requests
 from requests.auth import HTTPBasicAuth
 from django.conf import settings
@@ -29,6 +13,7 @@ try:
     import json
 except ImportError:
     import simplejson as json
+
 
 class Mixpanel(object):
 
@@ -47,26 +32,14 @@ class Mixpanel(object):
         params['format'] = format
 
         request_url = '/'.join([self.ENDPOINT, str(self.VERSION)] + methods)
-        # request_url = '{}/{}'.format(
-        #     '/'.join([self.ENDPOINT, str(self.VERSION)]),
-        #     'export')
         if http_method == 'GET':
             data = None
             request_url = request_url + '/?' + self.unicode_urlencode(params)
         else:
             data = self.unicode_urlencode(params)
 
-        # headers = {'Authorization': 'Basic {encoded_secret}'.format(
-        #     encoded_secret=base64.b64encode(self.api_secret))}
-        # request = urllib2.Request(request_url, data, headers)
-        # response = urllib2.urlopen(request, timeout=120)
-        print request_url
-        # return json.loads(response.read())
         response = requests.get(url=request_url, auth=HTTPBasicAuth(self.api_secret, ''))
         return json.loads(response.content)
-
-        # data = response.read()
-        # return [json.loads(line) for line in data.split('\n')[:-1]]
 
     def unicode_urlencode(self, params):
         """

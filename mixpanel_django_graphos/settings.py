@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'graphos',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'mixpanel_django_graphos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates", )],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,5 +120,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Mixpanel settings
 MIXPANEL_API_KEY = "56fed608d6b27311ada18b40f94235ce"
 MIXPANEL_SECRET_KEY = "0d1f2b8b4539fd6452ec08402c4a44ef"
+MIXPANEL_EVENT_NAMES = ["Placelet Loaded", "Placelet Preview Loaded"]

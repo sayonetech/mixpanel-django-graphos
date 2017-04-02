@@ -1,0 +1,9 @@
+{% extends "admin/index.html" %}
+
+{% block sidebar %}
+    {{block.super}}
+    <div>
+        <h2>Activity</h2>
+        <a href="/admin/activity-report/">View Stats</a>
+    </div>
+{% endblock %}

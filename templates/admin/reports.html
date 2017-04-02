@@ -1,0 +1,104 @@
+{% extends "admin/base_site.html" %}
+
+<!-- LOADING -->
+{% load admin_static i18n %}
+
+{% block title %}Activity Report{% endblock %}
+
+<!-- STYLESHEETS -->
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock %}
+
+<!-- BREADCRUMBS -->
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="/admin">{% trans 'Home' %}</a>
+        &rsaquo; {% trans 'Activity Report' %}
+    </div>
+{% endblock %}
+
+{% block extrastyle %}
+
+<style type="text/css" xmlns="http://www.w3.org/1999/html">
+    .grp-module .l-2c-fluid.grp-cell.l-d-4 .c-1 {
+    min-width: 140px;
+    float: none;
+    display: table-cell;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+    }
+
+    .trip_subform{margin: 10px;}
+    .grp-module .l-2c-fluid.grp-cell .c-2 * {
+    white-space: normal;
+    margin-right: 10px;
+    }
+
+    .selectbox{
+        width: 300px!important;
+    }
+
+    .block_left{width:60%;float: left; }
+
+    </style>
+
+{% endblock %}
+{% block extrahead %}
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+    </script>
+{% endblock %}
+
+{% block content %}
+    <header id="grp-content-title">
+        <h1>REPORTS</h1>
+    </header>
+    <div id="grp-content-container">
+        <form action="." method="get" id="report_form" name="report_form">
+            <fieldset class="grp-module">
+                <!--<h2 class="grp-collapse-handler">Reports</h2>-->
+
+                <div class="block_left">
+                    <div class="grp-cell l-2c-fluid l-d-4 trip_subform">
+                        <div class="c-1">Select User:</div>
+                        <div  class="c-2">
+                            <select name="user" id="id_user_name" class="selectbox">
+                                <option value="all_users">All Users</option>
+                                {% for user in users %}
+                                    <option value="{{ user.id }}" {% ifequal request.GET.user|add:"0" user.id %}selected{% endifequal %}>{% firstof user.name user.email %}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grp-cell l-2c-fluid l-d-4 trip_subform">
+                        <div class="c-1">Select Event:</div>
+                        <div class="c-2">
+
+                            <select name="event" id="event" class="selectbox">
+                                {% for event in event_names %}
+                                    <option value="{{ event }}" {% ifequal request.GET.event event %}selected{% endifequal %}>{{ event }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <input type="submit" value="Submit">
+                        </div>
+                    </div>
+
+                    {% if mp_activity_chart %}
+                    <div class="grp-module grp-changelist-results">
+                        {{ mp_activity_chart.piechart.as_html }}
+                        {{ mp_activity_chart.linechart.as_html }}
+                        {{ mp_activity_chart.barchart.as_html }}
+                        {{ mp_activity_chart.columnchart.as_html }}
+                    </div>
+                    {% endif %}
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+{% endblock %}

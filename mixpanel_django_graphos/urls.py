@@ -1,20 +1,25 @@
-"""mixpanel_django_graphos URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.10/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
 from django.conf.urls import url
 from django.contrib import admin
+
+from mixpanel_django_graphos.views import ReportActivityView
+
+
+admin.site.index_template = 'admin/index.html'
+admin.autodiscover()
+
+
+def get_admin_urls(urls):
+    """
+    Extend admin to include additional urls
+    """
+    def get_urls():
+        my_urls = [url(r'^activity-report/$', admin.site.admin_view(
+            ReportActivityView.as_view()), name='activity-report')]
+        return my_urls + urls
+    return get_urls
+
+admin_urls = get_admin_urls(admin.site.get_urls())
+admin.site.get_urls = admin_urls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
